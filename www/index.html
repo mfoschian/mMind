@@ -43,6 +43,44 @@
 		{
 			border: 1px solid red;
 		}
+		span.digit
+		{
+			padding-left: 0.3em;
+			padding-right: 0.3em;
+		}
+		div#codebox
+		{
+			padding: 1em;
+			text-alignment: center;
+		}
+		div#codebox span
+		{
+			padding-left: 0.3em;
+			padding-right: 0.3em;
+			min-width: 1.6em;
+			height: 1em;
+		}
+		div#codebox span.hi
+		{
+			border-bottom: 1px solid black;
+		}
+		div#codebox span.lo
+		{
+		}
+		div#codeboard
+		{
+			padding: 1em;
+			text-alignment: center;
+		}
+		div#codeboard span
+		{
+			padding-left: 0.3em;
+			padding-right: 0.3em;
+			min-width: 1.6em;
+			height: 1em;
+			cursor: pointer;
+			border: 1px solid black;
+		}
 		</style>
 		
     </head>
@@ -58,13 +96,14 @@
 
         </div>
         <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/gui.js"></script>
         <script type="text/javascript" src="js/mMind.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
         </script>
 
-<input type="button" id="resetgame" value="Inizia" onclick="startGame()"></input>
+<input type="button" id="resetgame" value="Nuovo gioco" onclick="startGame()"></input>
 <hr></hr>
 <div id="board">
 <table border=1>
@@ -76,10 +115,6 @@
 </tr>
 </tbody>
 </table>
-<div id="gameinput">
-	<input type="text" size="6" id="solution" ></input>
-	<input type="button" value="accept" onclick="checkSolution()" default></input>
-</div>
 </div>
 
 

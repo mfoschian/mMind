@@ -1,0 +1,295 @@
+function GUI( options )
+{
+	this.config = options;
+	this.guesses = 0;
+
+	this.events = {};
+	this.on = function( name, callback )
+	{
+		if( typeof(callback) != 'function' )
+			return;
+
+		this.events[name] = callback;
+	};
+	this.getEvent = function( name )
+	{
+		return this.events[name];
+	};
+	this.fireEvent = function( name, args )
+	{
+		var f = this.getEvent(name);
+		if( f )
+			f( args );
+	};
+
+	var me = this;
+	
+	this.setup = function()
+	{
+		this.makeInputWidget2();
+		
+		this.clearWrongSolution();
+		this.guesses = 0;
+	};
+	this.clearBoard = function()
+	{
+		var tb = document.getElementById('tboard');
+		if( !tb ) return;
+		
+		var e=[], i;
+		els = tb.getElementsByClassName('hintrow')
+		for( i=0; i<els.length; i++ )
+		{
+			e.push(els[i]);
+		}
+		for( i=0; i<e.length; i++ )
+		{
+			tb.removeChild(e[i]);
+		}
+	};
+
+	this.getSolution = function()
+	{
+		var el = document.getElementById('solution');
+		if( !el ) return this.getSolution2();
+
+		var value = el.value;
+		
+		var s = {};
+		for( var i = 0; i < value.length; i++ )
+		{
+			var code = value[i];
+			s[i] = { code: value[i], position: i };
+		}
+		s.length = value.length;
+		return s;
+	};
+	this.getSolution2 = function()
+	{
+		var s = { length: 0 };
+		var poss = this.config.positions;
+		for( var i=0; i<poss.length; i++ )
+		{
+			var pos = poss[i];
+			var code = document.getElementById('code'+pos);
+			if(!code) continue;
+			
+			var code_value = code.innerHTML;
+			s[i] = { code: code_value, position: pos };
+			s.length++;
+		}
+			
+		return s;
+	};
+
+
+	this.makeSpan = function( html, klass )
+	{
+		return '<span class="'+(klass||'digit')+'">'+html+'</span>';
+	}
+
+	this.addGuess = function(s,a)
+	{
+		var tb = document.getElementById('tboard');
+		if( !tb ) return;
+
+		var g = document.createElement('tr');
+		g.className = 'hintrow';
+		
+		function addCell(html)
+		{
+			var td = document.createElement('td');
+			td.innerHTML = html;
+			g.appendChild(td);
+		}
+		this.guesses++;
+		addCell( this.guesses );
+		var str = '';
+		for( var i in this.config.positions )
+		{
+			var t = s[i];
+			str += this.makeSpan(t.code,'digit');
+		}
+		addCell( str );
+
+		str = '';
+		for( var i in this.config.positions )
+		{
+			var t = a[i];
+			if( t.status == 'black' )
+				str = this.makeSpan('O','digit') + str;
+
+			else if( t.status == 'white' )
+				str = str + this.makeSpan('V','digit');
+		}
+		addCell( str );
+
+		tb.appendChild(g);
+	};
+	this.displayInput = function()
+	{
+		var inp = document.getElementById('gameinput');
+		if( inp ) inp.style.display = 'block';
+	};
+	this.hideInput = function()
+	{
+		var inp = document.getElementById('gameinput');
+		if( inp ) inp.style.display = 'none';
+	};
+	this.markWrongSolution = function()
+	{
+		var sol = document.getElementById('solution');
+		if( sol ) sol.classList.add('wrong');
+	};
+	this.clearWrongSolution = function()
+	{
+		var sol = document.getElementById('solution');
+		if( sol ) sol.classList.remove('wrong');
+	};
+	this.displayWin = function()
+	{
+		this.hideInput();
+	};
+	this.makeInputWidget = function()
+	{
+		var container = document.getElementById('board');
+		if( !container )
+		{
+			console.log('board dvi not found');
+			return;
+		}
+
+		var div = document.getElementById('gameinput');
+		if( !div )
+		{
+			div = document.createElement('div');
+			div.id = 'gameinput';
+
+			var txt = document.createElement('input');
+			txt.id = 'solution';
+			txt.setAttribute('type','text');
+			txt.setAttribute('size', this.config.positions.length );
+			txt.maxLength = this.config.positions.length;
+
+			div.appendChild(txt);
+			
+			var but = document.createElement('input');
+			but.setAttribute('type','button');
+			but.value = 'accept';
+			but.onclick = function() { me.fireEvent('makeGuess'); };
+
+			div.appendChild(but);
+
+			container.appendChild(div);
+		}
+		else
+		{
+			var sol = document.getElementById('solution');
+			sol.maxLength = this.config.positions.length;
+		}
+	};
+	
+	
+	// Input Widget management
+	this.makeInputWidget2 = function()
+	{
+		var container = document.getElementById('board');
+		if( !container )
+		{
+			console.log('board dvi not found');
+			return;
+		}
+
+		var div = document.getElementById('gameinput');
+		if( div ) return;
+
+		div = document.createElement('div');
+		div.id = 'gameinput';
+		
+		var codebox = document.createElement('div');
+		codebox.id = 'codebox';
+		
+		var poss = this.config.positions;
+		for( var i=0; i<poss.length; i++ )
+		{
+			var pos = poss[i];
+			var code = document.createElement('span');
+			code.id = 'code'+pos;
+			code.setAttribute('posindex', i);
+			code.innerHTML = ' ';
+			code.onclick = function() { me.selectCodePos( this.getAttribute('posindex') ); }
+			codebox.appendChild(code);
+		}
+
+		div.appendChild(codebox);
+		
+		var codeboard = document.createElement('div');
+		codeboard.id = 'codeboard';
+		
+		var codes = this.config.codes;
+		for( var i=0; i<codes.length; i++ )
+		{
+			var c = codes[i];
+			var code = document.createElement('span');
+			code.innerHTML = c;
+			code.setAttribute('codevalue',c);
+			code.onclick = function() { me.onCodeClick( this.getAttribute('codevalue') ); }
+			codeboard.appendChild(code);
+		}
+
+		div.appendChild(codeboard);
+		
+
+		container.appendChild(div);
+	};
+	
+	this.currentposIx = 0;
+	this.currentPos = function()
+	{
+		return this.config.positions[this.currentposIx];
+	};
+	this.selectCodePos = function(ixa)
+	{
+		var ix = parseInt(ixa);
+		if( isNaN(ix) ) return;
+
+		var newp = this.config.positions[ix];
+		var oldp = this.config.positions[this.currentposIx];
+
+		this.delightPos( oldp );
+		this.currentposIx = ix;
+		this.hilightPos( newp );
+	};
+	this.setCodePos = function(pos, code )
+	{
+		var el = document.getElementById('code'+pos);
+		if( !el )
+			return;
+		
+		el.innerHTML = code;
+		el.setAttribute('codevalue',code);
+	};
+	this.hilightPos = function(pos)
+	{
+		var el = document.getElementById('code'+pos);
+		if( el )
+			el.classList.add('hi');
+	};
+	this.delightPos = function(pos)
+	{
+		var el = document.getElementById('code'+pos);
+		if( el )
+			el.classList.remove('hi');
+	};
+	this.onCodeClick = function( code )
+	{
+		console.log('clicked '+code);
+		var newIx = this.currentposIx + 1;
+		if( newIx >= this.config.positions.length )
+			newIx = 0;
+
+		this.setCodePos( this.currentPos(), code );
+		this.selectCodePos( newIx );
+	};
+};
+

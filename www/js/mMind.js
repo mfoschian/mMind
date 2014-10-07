@@ -1,4 +1,4 @@
-var Game =
+var GameConfig =
 {
 	positions: [0, 1, 2, 3],
 	codes: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ],
@@ -7,36 +7,30 @@ var Game =
 		allowAnyFirstCode: false,
 		prohibitedFirsCode: 0,
 		allowDuplicatedCodes: false
-	},
+	}
+};
+
+var Game =
+{
+	config: GameConfig,
 	started: false,
-	guesses: 0,
 	solution: {}
 };
-function clearTable()
-{
-	var tb = document.getElementById('tboard');
-	if( !tb ) return;
-	
-	var e=[], i;
-	els = tb.getElementsByClassName('hintrow')
-	for( i=0; i<els.length; i++ )
-	{
-		e.push(els[i]);
-	}
-	for( i=0; i<e.length; i++ )
-	{
-		tb.removeChild(e[i]);
-	}
-}
+
+var gui = new GUI( Game.config );
+
 function newSolution()
 {
 	var c;
-	if( !Game.constraints.allowDuplicatedCodes )
+	var constraints = Game.config.constraints;
+	var codes = Game.config.codes;
+
+	if( !constraints.allowDuplicatedCodes )
 	{
 		c = [];
-		for( var ix = 0; ix < Game.codes.length; ix++ ) {  c.push( Game.codes[ix] ); }
+		for( var ix = 0; ix < codes.length; ix++ ) {  c.push( codes[ix] ); }
 		c.sort( function(a,b) { return Math.random() < 0.5 ? -1 : 1; } );
-		if( !Game.constraints.allowAnyFirstCode && c[0] == Game.constraints.prohibitedFirsCode )
+		if( !constraints.allowAnyFirstCode && c[0] == constraints.prohibitedFirsCode )
 		{
 			var co = c.shift();
 			c.push(co);
@@ -49,12 +43,12 @@ function newSolution()
 			return Game.codes[ Math.floor(Math.random()*Game.codes.length) ];
 		}
 		var code = randomCode();
-		while( !Game.constraints.allowAnyFirstCode && code == Game.constraints.prohibitedFirsCode )
+		while( !constraints.allowAnyFirstCode && code == constraints.prohibitedFirsCode )
 		{
 			code = randomCode();
 		}
 		c = [ code ];
-		for( var j = 1; j < Game.positions.length; j++ )
+		for( var j = 1; j < Game.config.positions.length; j++ )
 		{
 			c.push( randomCode() );
 		}
@@ -62,9 +56,9 @@ function newSolution()
 	
 	
 	var s = {};
-	for( var i=0; i<Game.positions.length; i++ )
+	for( var i=0; i<Game.config.positions.length; i++ )
 	{
-		var p = Game.positions[i];
+		var p = Game.config.positions[i];
 		s[p] = { code: c[i], position: p };
 	}
 	
@@ -73,34 +67,15 @@ function newSolution()
 function startGame()
 {
 	if( Game.started )
-		clearTable();
+		gui.clearBoard();
 
-	var sol = document.getElementById('solution');
-	sol.maxLength = Game.positions.length;
-	clearWrongSolution();
+	gui.setup();
 
 	Game.started = true;
-	Game.guesses = 0
 
 	Game.solution = newSolution();
 	//console.log( 'Sol to guess: '+solution2str(Game.solution) );
-	displayInput();
-}
-function getSolution()
-{
-	var el = document.getElementById('solution');
-	if( !el ) return null;
-
-	var value = el.value;
-	
-	var s = {};
-	for( var i = 0; i < value.length; i++ )
-	{
-		var code = value[i];
-		s[i] = { code: value[i], position: i };
-	}
-	s.length = value.length;
-	return s;
+	gui.displayInput();
 }
 function cloneSolution(s)
 {
@@ -119,9 +94,9 @@ function getSolutionAffinity( a1, a2 )
 	var s2 = cloneSolution( a2 );
 
 	// Check out the blacks
-	for( var i in Game.positions )
+	for( var i in Game.config.positions )
 	{
-		var pos = Game.positions[i];
+		var pos = Game.config.positions[i];
 		if( s1[pos].code == s2[pos].code )
 		{
 			s1[pos].status = 'black';
@@ -187,7 +162,7 @@ function solution2str(s)
 
 function validate( solution )
 {
-	if( solution.length != Game.positions.length )
+	if( solution.length != Game.config.positions.length )
 		return false;
 
 	for( var i=0; i<solution.length; i++ )
@@ -195,9 +170,9 @@ function validate( solution )
 		var sol = solution[i];
 		var found = false;
 
-		for( var j=0; j<Game.codes.length; j++ )
+		for( var j=0; j<Game.config.codes.length; j++ )
 		{
-			var code = Game.codes[j];
+			var code = Game.config.codes[j];
 			if( code == sol.code )
 			{
 				found = true;
@@ -211,87 +186,30 @@ function validate( solution )
 	return true;
 }
 
-function checkSolution()
+
+gui.on( 'makeGuess', function()
 {
-	var s = getSolution();
+	var s = gui.getSolution();
 
 	// Validate solution
 	if( !validate(s) )
 	{
-		markWrongSolution();
+		gui.markWrongSolution();
 		return;
 	}
 
 	//console.log( 'You say '+solution2str(s) );
-	clearWrongSolution();
+	gui.clearWrongSolution();
 
 	var a = getSolutionAffinity( s, Game.solution );
 	
 	//console.log( 'Affinity: '+solution2str(a) );
 	
-	Game.guesses++;
-	
-	displayGuess( s, a );
-	if( a.blacks == Game.positions.length )
-		displayWin();
-}
-function displayGuess(s,a)
-{
-	var tb = document.getElementById('tboard');
-	if( !tb ) return;
+	gui.addGuess( s, a );
 
-	var g = document.createElement('tr');
-	g.className = 'hintrow';
-	
-	function addCell(html)
-	{
-		var td = document.createElement('td');
-		td.innerHTML = html;
-		g.appendChild(td);
-	}
-	addCell( Game.guesses );
-	var str = '';
-	for( var i in Game.positions )
-	{
-		var t = s[i];
-		str += t.code;
-	}
-	addCell( str );
+	if( a.blacks == Game.config.positions.length )
+		// END OF GAME
+		gui.displayWin();
 
-	str = '';
-	for( var i in Game.positions )
-	{
-		var t = a[i];
-		if( t.status == 'black' )
-			str = 'O' + str;
-		else if( t.status == 'white' )
-			str = str + 'V';
-	}
-	addCell( str );
+});
 
-	tb.appendChild(g);
-}
-function displayInput()
-{
-	var inp = document.getElementById('gameinput');
-	inp.style.display = 'block';
-}
-function hideInput()
-{
-	var inp = document.getElementById('gameinput');
-	inp.style.display = 'none';
-}
-function markWrongSolution()
-{
-	var sol = document.getElementById('solution');
-	sol.classList.add('wrong');
-}
-function clearWrongSolution()
-{
-	var sol = document.getElementById('solution');
-	sol.classList.remove('wrong');
-}
-function displayWin()
-{
-	hideInput();
-}
