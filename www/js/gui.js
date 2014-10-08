@@ -93,7 +93,9 @@ function GUI( options )
 		var tb = document.getElementById('tboard');
 		if( !tb ) return;
 
-		var g = document.createElement('tr');
+		//var g = document.createElement('tr');
+		var g = tb.insertRow(g);
+
 		g.className = 'hintrow';
 		
 		function addCell(html)
@@ -124,7 +126,7 @@ function GUI( options )
 		}
 		addCell( str );
 
-		tb.appendChild(g);
+		//tb.appendChild(g);
 	};
 	this.displayInput = function()
 	{
@@ -207,10 +209,10 @@ function GUI( options )
 	// Input Widget management
 	this.makeInputWidget2 = function()
 	{
-		var container = document.getElementById('board');
+		var container = document.getElementById('pad');
 		if( !container )
 		{
-			console.log('board dvi not found');
+			console.log('pad div not found');
 			return;
 		}
 

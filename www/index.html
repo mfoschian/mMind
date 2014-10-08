@@ -30,11 +30,19 @@
 		div#board
 		{
 			text-align: center;
+			/*
+			position: absolute;
+			bottom: 0;
+			overflow-y: auto;
+			*/
 		}
 		div#guesses
 		{
 			text-align: center;
-		
+		}
+		div#guesses table
+		{
+			border-collapse: collapse;
 		}
 		table tbody#tboard
 		{
@@ -152,16 +160,19 @@
 <input type="button" id="resetgame" value="Nuovo gioco" onclick="startGame()"></input>
 <hr></hr>
 <div id="board">
+<div id="pad"></div>
 <div id="guesses">
-<table border=1>
-<tbody id="tboard">
-<tr class="gameheader">
-	<th>Tentativi</th>
-	<th>Combinazione</th>
-	<th>Risultati</th>
-</tr>
-</tbody>
-</table>
+	<table border=1 width="100%">
+	<thead>
+		<tr class="gameheader">
+			<th>Tentativi</th>
+			<th>Combinazione</th>
+			<th>Risultati</th>
+		</tr>
+	<thead>
+	<tbody id="tboard">
+	</tbody>
+	</table>
 </div>
 </div>
 
