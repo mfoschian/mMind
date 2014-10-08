@@ -136,20 +136,34 @@ function GUI( options )
 		var inp = document.getElementById('gameinput');
 		if( inp ) inp.style.display = 'none';
 	};
+	this.showNewGame = function()
+	{
+		var inp = document.getElementById('resetgame');
+		if( inp ) inp.style.display = 'block';
+	};
+	this.hideNewGame = function()
+	{
+		var inp = document.getElementById('resetgame');
+		if( inp ) inp.style.display = 'none';
+	};
 	this.markWrongSolution = function()
 	{
-		var sol = document.getElementById('solution');
+		//var sol = document.getElementById('solution');
+		var sol = document.getElementById('codebox');
 		if( sol ) sol.classList.add('wrong');
 	};
 	this.clearWrongSolution = function()
 	{
-		var sol = document.getElementById('solution');
+		//var sol = document.getElementById('solution');
+		var sol = document.getElementById('codebox');
 		if( sol ) sol.classList.remove('wrong');
 	};
 	this.displayWin = function()
 	{
 		this.hideInput();
+		this.showNewGame();
 	};
+	/*
 	this.makeInputWidget = function()
 	{
 		var container = document.getElementById('board');
@@ -188,7 +202,7 @@ function GUI( options )
 			sol.maxLength = this.config.positions.length;
 		}
 	};
-	
+	*/
 	
 	// Input Widget management
 	this.makeInputWidget2 = function()
@@ -210,13 +224,14 @@ function GUI( options )
 		codebox.id = 'codebox';
 		
 		var poss = this.config.positions;
+		
 		for( var i=0; i<poss.length; i++ )
 		{
 			var pos = poss[i];
 			var code = document.createElement('span');
 			code.id = 'code'+pos;
 			code.setAttribute('posindex', i);
-			code.innerHTML = ' ';
+			code.innerHTML = '_';
 			code.onclick = function() { me.selectCodePos( this.getAttribute('posindex') ); }
 			codebox.appendChild(code);
 		}
@@ -229,6 +244,9 @@ function GUI( options )
 		var codes = this.config.codes;
 		for( var i=0; i<codes.length; i++ )
 		{
+			if( i == (codes.length/2) )
+				codeboard.appendChild(document.createElement('p'));
+			
 			var c = codes[i];
 			var code = document.createElement('span');
 			code.innerHTML = c;
@@ -236,6 +254,13 @@ function GUI( options )
 			code.onclick = function() { me.onCodeClick( this.getAttribute('codevalue') ); }
 			codeboard.appendChild(code);
 		}
+
+		var but = document.createElement('div');
+		but.className = 'makeGuess';
+		but.innerHTML = 'OK';
+		but.onclick = function() { me.fireEvent('makeGuess'); };
+		codeboard.appendChild(document.createElement('p'));
+		codeboard.appendChild(but);
 
 		div.appendChild(codeboard);
 		

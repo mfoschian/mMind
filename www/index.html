@@ -27,6 +27,15 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <title>Master Mind</title>
 		<style>
+		div#board
+		{
+			text-align: center;
+		}
+		div#guesses
+		{
+			text-align: center;
+		
+		}
 		table tbody#tboard
 		{
 			border: 1px solid black
@@ -39,7 +48,13 @@
 		{
 			text-align: center;
 		}
+		/*
 		input#solution.wrong
+		{
+			border: 1px solid red;
+		}
+		*/
+		div#codebox.wrong
 		{
 			border: 1px solid red;
 		}
@@ -51,18 +66,22 @@
 		div#codebox
 		{
 			padding: 1em;
-			text-alignment: center;
+			text-align: center;
 		}
 		div#codebox span
 		{
-			padding-left: 0.3em;
-			padding-right: 0.3em;
 			min-width: 1.6em;
 			height: 1em;
+			background-color: rgb(219, 219, 0);
+			margin: 0.2em;
+			padding: 0.5em;
+			border-radius: 10px;
+			moz-border-radius: 10px;
 		}
 		div#codebox span.hi
 		{
-			border-bottom: 1px solid black;
+			border: 1px solid black;
+			font-weight: bold;
 		}
 		div#codebox span.lo
 		{
@@ -70,16 +89,43 @@
 		div#codeboard
 		{
 			padding: 1em;
-			text-alignment: center;
+			text-align: center;
 		}
 		div#codeboard span
 		{
-			padding-left: 0.3em;
-			padding-right: 0.3em;
 			min-width: 1.6em;
 			height: 1em;
 			cursor: pointer;
 			border: 1px solid black;
+			padding: 0.5em;
+			margin: 0.2em;
+			border-radius: 10px;			
+			moz-border-radius: 10px;			
+		}
+		div#codeboard p
+		{
+			height: 5px;
+			margin: 10px;
+		}
+		div.makeGuess
+		{
+			min-width: 1.6em;
+			height: 1em;
+			cursor: pointer;
+			border: 1px solid black;
+			padding: 0.5em;
+			margin: 0.2em;
+			border-radius: 10px;			
+			moz-border-radius: 10px;			
+		}
+		#resetgame
+		{
+			display: none;
+			padding: 0.7em;
+			border: 1px solid black;
+			border-radius: 3px;
+			background-color: darkseagreen;
+			font-weight: bold;
 		}
 		</style>
 		
@@ -106,6 +152,7 @@
 <input type="button" id="resetgame" value="Nuovo gioco" onclick="startGame()"></input>
 <hr></hr>
 <div id="board">
+<div id="guesses">
 <table border=1>
 <tbody id="tboard">
 <tr class="gameheader">
@@ -115,6 +162,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 
 
