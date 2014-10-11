@@ -318,5 +318,50 @@ function GUI( options )
 		this.setCodePos( this.currentPos(), code );
 		this.selectCodePos( newIx );
 	};
+
+	this.resize = function(ev)
+	{
+		var b = document.body;
+		var w = b.clientWidth;
+		var h = b.clientHeight;
+		console.log( w, h );
+
+		var board = document.getElementById('board');
+		var pad = document.getElementById('pad');
+		if(pad && board)
+		{
+			if( w > h )	// landscape
+			{
+				board.classList.add('horizontal');
+				pad.classList.add('horizontal');
+				
+				//var bw = board.clientWidth;
+				//pad.style.left = (w-bw) + 'px';
+			}
+			else
+			{
+				board.classList.remove('horizontal');
+				pad.classList.remove('horizontal');
+
+				//var ph = pad.clientHeight;
+				//board.style.bottom = h + 'px';
+			}
+		}
+	};
+
+	this.listenResize = function()
+	{
+		document.onresize = this.resize;
+		document.body.onresize = this.resize;
+
+		document.addEventListener('orientationchange', this.resize);
+	};
+	this.init = function()
+	{
+		this.setup();
+		this.displayInput();
+		this.resize();
+		this.listenResize();
+	};
 };
 

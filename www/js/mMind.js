@@ -14,10 +14,11 @@ var Game =
 {
 	config: GameConfig,
 	started: false,
-	solution: {}
+	solution: null
 };
 
 var gui = new GUI( Game.config );
+
 
 function newSolution()
 {
@@ -69,13 +70,12 @@ function startGame()
 	if( Game.started )
 		gui.clearBoard();
 
-	gui.setup();
 
 	Game.started = true;
 
 	Game.solution = newSolution();
 	//console.log( 'Sol to guess: '+solution2str(Game.solution) );
-	gui.displayInput();
+	gui.init();
 }
 function cloneSolution(s)
 {
@@ -190,6 +190,11 @@ function validate( solution )
 gui.on( 'makeGuess', function()
 {
 	var s = gui.getSolution();
+	if(!Game.solution)
+	{
+		Game.solution = newSolution();
+	}
+
 
 	// Validate solution
 	if( !validate(s) )
