@@ -26,7 +26,7 @@ function GUI( options )
 	
 	this.setup = function()
 	{
-		this.makeInputWidget2();
+		this.makeInputWidget();
 		
 		this.clearWrongSolution();
 		this.guesses = 0;
@@ -150,13 +150,11 @@ function GUI( options )
 	};
 	this.markWrongSolution = function()
 	{
-		//var sol = document.getElementById('solution');
 		var sol = document.getElementById('codebox');
 		if( sol ) sol.classList.add('wrong');
 	};
 	this.clearWrongSolution = function()
 	{
-		//var sol = document.getElementById('solution');
 		var sol = document.getElementById('codebox');
 		if( sol ) sol.classList.remove('wrong');
 	};
@@ -165,49 +163,9 @@ function GUI( options )
 		this.hideInput();
 		this.showNewGame();
 	};
-	/*
-	this.makeInputWidget = function()
-	{
-		var container = document.getElementById('board');
-		if( !container )
-		{
-			console.log('board dvi not found');
-			return;
-		}
 
-		var div = document.getElementById('gameinput');
-		if( !div )
-		{
-			div = document.createElement('div');
-			div.id = 'gameinput';
-
-			var txt = document.createElement('input');
-			txt.id = 'solution';
-			txt.setAttribute('type','text');
-			txt.setAttribute('size', this.config.positions.length );
-			txt.maxLength = this.config.positions.length;
-
-			div.appendChild(txt);
-			
-			var but = document.createElement('input');
-			but.setAttribute('type','button');
-			but.value = 'accept';
-			but.onclick = function() { me.fireEvent('makeGuess'); };
-
-			div.appendChild(but);
-
-			container.appendChild(div);
-		}
-		else
-		{
-			var sol = document.getElementById('solution');
-			sol.maxLength = this.config.positions.length;
-		}
-	};
-	*/
-	
 	// Input Widget management
-	this.makeInputWidget2 = function()
+	this.makeInputWidget = function()
 	{
 		var container = document.getElementById('pad');
 		if( !container )
@@ -257,11 +215,12 @@ function GUI( options )
 			codeboard.appendChild(code);
 		}
 
+		codeboard.appendChild(document.createElement('p'));
+
 		var but = document.createElement('div');
 		but.className = 'makeGuess';
 		but.innerHTML = 'OK';
 		but.onclick = function() { me.fireEvent('makeGuess'); };
-		codeboard.appendChild(document.createElement('p'));
 		codeboard.appendChild(but);
 
 		div.appendChild(codeboard);
@@ -311,6 +270,7 @@ function GUI( options )
 	this.onCodeClick = function( code )
 	{
 		console.log('clicked '+code);
+		
 		var newIx = this.currentposIx + 1;
 		if( newIx >= this.config.positions.length )
 			newIx = 0;

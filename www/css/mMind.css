@@ -31,7 +31,6 @@ body {
 	left: 0px;
 	right: 0px;
 	font-size: 100%;
-	/*border: 1px solid red;*/
 }
 
 div#board
@@ -42,7 +41,6 @@ div#board
 	left: 0px;
 	right: 0px;
 	bottom: 213px;
-	/*border: 1px solid blue;*/
 	overflow-y: auto;
 }
 
@@ -50,7 +48,6 @@ div#board.horizontal
 {
 	top: 50px;
 	left: 0px;
-	/*right: 171px;*/
 	right: 19em;
 	bottom: 0px;
 }
@@ -60,7 +57,6 @@ div#pad
 	background-color: rgb(18, 156, 140);
 	position: absolute;
 	top: auto;
-	/*height: 213px;*/
 	height: 13em;
 	bottom: 0;
 	left: 0;
@@ -74,7 +70,6 @@ div#pad.horizontal
 	bottom: 0;
 	right: 0px;
 	left: auto;
-	/*width: 171px;*/
 	width: 14em;
 }
 
@@ -141,20 +136,30 @@ div#codeboard span
 {
 	cursor: pointer;
 	border: 1px solid black;
-	/*
-	padding: 5px;
-	margin: 2px;
-	*/
 	padding: 0.7em;
 	border-radius: 7px;
 	font-size: 1.3em;	
 }
+
+@keyframes flash
+{
+    to { background-color: rgb(219, 219, 0); }
+}
+ 
+@-webkit-keyframes flash
+{
+    to { background-color: rgb(219, 219, 0); }
+}
+ 
+span:active
+{
+    animation:flash 180ms;
+    -webkit-animation:flash 180ms;
+}
+
+
 div#codeboard p
 {
-	/*
-	height: 5px;
-	margin: 10px;
-	*/
 	margin: 1.75em;
 }
 div.makeGuess
@@ -170,9 +175,16 @@ div.makeGuess
 	-moz-border-radius: 10px;			
 	-webkit-border-radius: 10px;
 }
+
+
+div.makeGuess:active
+{
+    animation:flash 180ms;
+    -webkit-animation:flash 180ms;
+}
+
 #resetgame
 {
-	/*display: none;*/
 	padding: 0.7em;
 	border: 1px solid black;
 	border-radius: 3px;
