@@ -211,6 +211,8 @@ function GUI( options )
 			var code = document.createElement('span');
 			code.innerHTML = c;
 			code.setAttribute('codevalue',c);
+			code.setAttribute('onmouseover','');
+			code.setAttribute('ontouchstart','');
 			code.onclick = function() { me.onCodeClick( this.getAttribute('codevalue') ); }
 			codeboard.appendChild(code);
 		}
@@ -219,6 +221,8 @@ function GUI( options )
 
 		var but = document.createElement('div');
 		but.className = 'makeGuess';
+		but.setAttribute('onmouseover','');
+		but.setAttribute('ontouchstart','');
 		but.innerHTML = 'OK';
 		but.onclick = function() { me.fireEvent('makeGuess'); };
 		codeboard.appendChild(but);
